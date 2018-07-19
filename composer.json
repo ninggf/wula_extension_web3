@@ -1,0 +1,30 @@
+{
+  "name": "wula/web3",
+  "description": "Web3代理",
+  "type": "wula-extension",
+  "license": "MIT",
+  "keywords": [
+	"Ethereum",
+	"Web3",
+	"ERC20"
+  ],
+  "require": {
+	"wula/wula-installer": "^2.0",
+	"sc0vu/web3.php": "^0.1"
+  },
+  "authors": [
+	{
+	  "name": "Leo Ning",
+	  "email": "windywany@gmail.com"
+	}
+  ],
+  "extra": {
+	"branch-alias": {
+	  "dev-master": "1.0-dev"
+	}
+  },
+  "support": {
+	"issues": "https://github.com/ninggf/wula_extension_web3/issues"
+  },
+  "homepage": "http://www.wulacms.com/"
+}
