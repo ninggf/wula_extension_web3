@@ -15,7 +15,8 @@
         'default' => [
             'url'=>'http://localhost:8545',
             'timeout'=>5,
-            'startBlockId'=>10000
+            'startBlockId'=>10000,
+            'fullTxData'=>true
         ],
         'otherServer'=>[
             'url'=>'http://www.nidefuwuqi.com:8545',
@@ -27,6 +28,7 @@
 > * `url`: RPC服务器
 > * `timeout`: 连接超时，单位秒
 > * `startBlockId`: 从哪个区块开始同步数据，如果不设置则不会同步区块数据
+> * `fullTxData`: 是否获取事务的详细数据
 
 ### 使用
 

@@ -67,13 +67,14 @@ class Web3Factory {
 				}
 				$lastSyncedBlockId -= 1;
 			}
-			$web3 = self::newWeb3($provider);
+			$fullTranscationData = boolval($cfg['fullTxData'] ?? false);
+			$web3                = self::newWeb3($provider);
 			//最新高度
 			$latestBlockId = $web3->getLatestBlockNumber();
 			//一直同步到最新区块
 			while ($lastSyncedBlockId < $latestBlockId) {
 				$lastSyncedBlockId += 1;//下一个区块编号
-				$block             = $web3->getBlock(QuantityFormatter::format($lastSyncedBlockId));
+				$block             = $web3->getBlock(QuantityFormatter::format($lastSyncedBlockId), $fullTranscationData);
 				if (!$block) {
 					log_warn($web3->lastError, 'ethereum.sync');
 					break;
