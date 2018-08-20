@@ -10,21 +10,25 @@
 使用之前请配置文件: `conf/web3_config.php`:
 
 ```php
-    
     return [
-        'default' => [
-            'url'=>'http://localhost:8545',
-            'timeout'=>5,
-            'startBlockId'=>10000,
-            'fullTxData'=>true
-        ],
-        'otherServer'=>[
-            'url'=>'http://www.nidefuwuqi.com:8545',
-            'timeout'=>5
+        'etherscanKey'=>'your apiKey issued by https://etherscan.io/',
+        'nodes'=>[
+            'default' => [
+                'url'=>'http://localhost:8545',
+                'timeout'=>5,
+                'startBlockId'=>10000,
+                'fullTxData'=>true
+            ],
+            'otherServer'=>[
+                'url'=>'http://www.nidefuwuqi.com:8545',
+                'timeout'=>5
+            ]
         ]
     ]
 ```
 > 说明:
+> * etherscanKey: API KEY
+> * nodes: 节点 
 > * `url`: RPC服务器
 > * `timeout`: 连接超时，单位秒
 > * `startBlockId`: 从哪个区块开始同步数据，如果不设置则不会同步区块数据
@@ -61,7 +65,8 @@
 *参数说明*
 
 > 1. `Web3 $web3` Web3 实例.
-> 2. `stdClass $block` 区块数据,详见[eth_getBlockByHash文档](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbyhash).
+> 2. `blockNumber` 区块ID.
+> 3. `stdClass $block` 区块数据或null,详见[eth_getBlockByHash文档](https://github.com/ethereum/wiki/wiki/JSON-RPC#eth_getblockbyhash).
 
 ### 感谢
 

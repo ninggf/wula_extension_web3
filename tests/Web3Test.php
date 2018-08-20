@@ -22,9 +22,11 @@ class Web3Test extends TestCase {
 	public static function setUpBeforeClass() {
 		$cfg = ConfigurationLoader::loadFromFile('web3');
 		$cfg->setConfigs([
-			'default' => [
-				'url'          => 'http://localhost:8545',
-				'startBlockId' => 1
+			'nodes' => [
+				'default' => [
+					'url'          => 'http://localhost:8545',
+					'startBlockId' => 1
+				]
 			]
 		]);
 	}

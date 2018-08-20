@@ -13,6 +13,7 @@ namespace wula\web3;
 use Web3\Formatters\QuantityFormatter;
 use Web3\Providers\HttpProvider;
 use Web3\RequestManagers\HttpRequestManager;
+use Web3\Utils;
 use wulaphp\conf\ConfigurationLoader;
 
 class Web3Factory {
@@ -26,9 +27,9 @@ class Web3Factory {
 	public static function newWeb3(string $cfg = 'default'): Web3 {
 		static $cfgs = false;
 		if ($cfgs === false) {
-			$cfgs = ConfigurationLoader::loadFromFile('web3');
+			$cfgs = ConfigurationLoader::loadFromFile('web3')->geta('nodes');
 		}
-		$conf = $cfgs->get($cfg);
+		$conf = $cfgs[ $cfg ] ?? null;
 		if (!$conf) {
 			$conf = ['url' => 'https://localhost:8545'];
 		} else if (!is_array($conf)) {
@@ -51,8 +52,19 @@ class Web3Factory {
 	 */
 	public static function sync(): array {
 		$cfgs          = ConfigurationLoader::loadFromFile('web3');
-		$providers     = $cfgs->toArray();
+		$key           = $cfgs->get('etherscanKey');
+		$providers     = $cfgs->geta('nodes');
 		$lastSyncedIds = [];
+		//最新高度
+		$etherscan = new Etherscan($key);
+
+		$proxy         = $etherscan->proxy;
+		$latestBlockId = $proxy->blockNumber();
+		if (!$latestBlockId) {
+			return [];
+		}
+		$latestBlockId = Utils::toBn($latestBlockId)->toString();
+
 		foreach ($providers as $provider => $cfg) {
 			//读取最后更新的blockid.
 			$syncDataFile      = TMP_PATH . '.ethereum.sync.' . $provider;
@@ -69,26 +81,29 @@ class Web3Factory {
 			}
 			$fullTranscationData = boolval($cfg['fullTxData'] ?? false);
 			$web3                = self::newWeb3($provider);
-			//最新高度
-			$latestBlockId = $web3->getLatestBlockNumber();
-			//一直同步到最新区块
-			while ($lastSyncedBlockId < $latestBlockId) {
+			//最后成功区块
+			$successBlockId = 0;
+			while ($lastSyncedBlockId < $latestBlockId) { //一直同步到最新区块
 				$lastSyncedBlockId += 1;//下一个区块编号
-				$block             = $web3->getBlock(QuantityFormatter::format($lastSyncedBlockId), $fullTranscationData);
-				if (!$block) {
-					log_warn($web3->lastError, 'ethereum.sync');
-					break;
+				$block             = null;
+				if (!$successBlockId) {
+					$block = $web3->getBlock(QuantityFormatter::format($lastSyncedBlockId), $fullTranscationData);
+					if (!$block) {
+						$successBlockId = $lastSyncedBlockId - 1;
+					}
 				}
 				try {
-					fire('ethereum\onBlockSynced', $web3, $block);
-				} catch (\Exception $e) {
-
-				} catch (\Error $er) {
+					fire('ethereum\onBlockSynced', $web3, $lastSyncedBlockId, $block);
+				} catch (\Throwable $e) {
 
 				}
+				usleep(100);
 			}
-			$lastSyncedIds[ $provider ] = $lastSyncedBlockId;
-			@file_put_contents($syncDataFile, '0x' . base_convert($lastSyncedBlockId, 10, 16));
+			if (!$successBlockId) {//本次全部同步成功
+				$successBlockId = $lastSyncedBlockId;
+			}
+			$lastSyncedIds[ $provider ] = $successBlockId;
+			@file_put_contents($syncDataFile, '0x' . base_convert($successBlockId, 10, 16));
 		}
 
 		return $lastSyncedIds;

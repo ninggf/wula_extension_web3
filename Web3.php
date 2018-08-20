@@ -75,10 +75,8 @@ class Web3 extends \Web3\Web3 {
 					$blockid = $rst->toString();
 				}
 			});
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			$this->lastError = $e->getMessage();
-		} catch (\Error $err) {
-			$this->lastError = $err->getMessage();
 		}
 
 		return $blockid;
@@ -103,10 +101,8 @@ class Web3 extends \Web3\Web3 {
 				}
 				$block = $rst;
 			});
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			$this->lastError = $e->getMessage();
-		} catch (\Error $err) {
-			$this->lastError = $err->getMessage();
 		}
 
 		return $block;
@@ -129,10 +125,8 @@ class Web3 extends \Web3\Web3 {
 				}
 				$tx = $rst;
 			});
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			$this->lastError = $e->getMessage();
-		} catch (\Error $err) {
-			$this->lastError = $err->getMessage();
 		}
 
 		return $tx;
