@@ -18,26 +18,26 @@ use wula\web3\modules\Proxy;
  * @property-read \wula\web3\modules\Proxy $proxy
  */
 class Etherscan {
-	const HOST = 'https://api.etherscan.io/api';
-	private $key     = '';
-	private $modules = [];
+    const HOST = 'https://api.etherscan.io/api';
+    private $key     = '';
+    private $modules = [];
 
-	public function __construct(string $key) {
-		$this->key = $key;
-	}
+    public function __construct(string $key) {
+        $this->key = $key;
+    }
 
-	public function __get($name) {
-		if (!array_key_exists($name, $this->modules)) {
-			switch ($name) {
-				case 'proxy':
-					$module = new Proxy($this->key);
-					break;
-				default:
-					$module = null;
-			}
-			$this->modules[ $name ] = $module;
-		}
+    public function __get($name) {
+        if (!array_key_exists($name, $this->modules)) {
+            switch ($name) {
+                case 'proxy':
+                    $module = new Proxy($this->key);
+                    break;
+                default:
+                    $module = null;
+            }
+            $this->modules[ $name ] = $module;
+        }
 
-		return $this->modules[ $name ];
-	}
+        return $this->modules[ $name ];
+    }
 }
