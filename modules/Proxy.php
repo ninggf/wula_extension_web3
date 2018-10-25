@@ -15,6 +15,7 @@ use Web3\Formatters\QuantityFormatter;
 use wula\web3\Etherscan;
 
 class Proxy {
+    public  $Id;
     private $url;
 
     public function __construct($key) {

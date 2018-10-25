@@ -26,20 +26,31 @@ class Web3Factory {
      * @return Web3
      */
     public static function newWeb3(string $cfg = 'default'): Web3 {
-        static $cfgs = false;
+        static $cfgs = false, $key = false;
         if ($cfgs === false) {
-            $cfgs = ConfigurationLoader::loadFromFile('web3')->geta('nodes');
+            $wcfg = ConfigurationLoader::loadFromFile('web3');
+            $key  = $wcfg->get('etherscanKey');
+            $cfgs = $wcfg->geta('nodes');
         }
+
         $conf = $cfgs[ $cfg ] ?? null;
         if (!$conf) {
             $conf = ['url' => 'https://localhost:8545'];
         } else if (!is_array($conf)) {
             $conf = ['url' => $conf];
         }
-        $timeout  = intval($conf['timeout'] ?? 5);
-        $rqmgr    = new HttpRequestManager($conf['url'] ?? 'http://localhost:8545', $timeout);
-        $provider = new HttpProvider($rqmgr);
-        $web3     = new Web3($provider);
+
+        $type = $conf['type'] ?? 'node';
+        if ($type == 'proxy') {
+            $etherscan = new Etherscan($key);
+            $web3      = $etherscan->proxy;
+        } else {
+            $timeout  = intval($conf['timeout'] ?? 5);
+            $rqmgr    = new HttpRequestManager($conf['url'] ?? 'http://localhost:8545', $timeout);
+            $provider = new HttpProvider($rqmgr);
+            $web3     = new Web3($provider);
+        }
+
         $web3->Id = $cfg;
         //从哪个区块开始同步
         $web3->startBlockId = $conf['startBlockId'] ?? false;
@@ -81,7 +92,8 @@ class Web3Factory {
                 $lastSyncedBlockId -= 1;
             }
             $fullTranscationData = boolval($cfg['fullTxData'] ?? false);
-            if ($cfg['type'] == 'proxy') {
+            $type                = $cfg['type'] ?? 'node';
+            if ($type == 'proxy') {
                 $web3 = $proxy;
             } else {
                 $web3 = self::newWeb3($provider);

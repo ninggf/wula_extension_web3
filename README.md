@@ -30,6 +30,7 @@
 > * etherscanKey: API KEY
 > * nodes: 节点 
 > * `url`: RPC服务器
+> * `type`: 可选`proxy`或空,当为`proxy`时,使用[etherscan](https://etherscan.io/apis#proxy)代理. 
 > * `timeout`: 连接超时，单位秒
 > * `startBlockId`: 从哪个区块开始同步数据，如果不设置则不会同步区块数据
 > * `fullTxData`: 是否获取事务的详细数据
