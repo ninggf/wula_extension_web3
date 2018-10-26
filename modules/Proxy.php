@@ -13,13 +13,14 @@ namespace wula\web3\modules;
 use curlient\Curlient;
 use Web3\Formatters\QuantityFormatter;
 use wula\web3\Etherscan;
+use wula\web3\Web3;
 
-class Proxy {
-    public  $Id;
+class Proxy extends Web3 {
     private $url;
 
-    public function __construct($key) {
+    public function __construct($key, $pv = '') {
         $this->url = Etherscan::HOST . '?module=proxy&apikey=' . $key;
+        parent::__construct($pv);
     }
 
     /**
@@ -36,7 +37,7 @@ class Proxy {
      *
      * @return null|string
      */
-    public function getLatestBlockNumber(): ?string {
+    public function getLatestBlockNumber(): string {
         return $this->blockNumber();
     }
 

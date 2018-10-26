@@ -42,8 +42,7 @@ class Web3Factory {
 
         $type = $conf['type'] ?? 'node';
         if ($type == 'proxy') {
-            $etherscan = new Etherscan($key);
-            $web3      = $etherscan->proxy;
+            $web3 = new Proxy($key, $conf['url'] ?? 'http://localhost:8545');
         } else {
             $timeout  = intval($conf['timeout'] ?? 5);
             $rqmgr    = new HttpRequestManager($conf['url'] ?? 'http://localhost:8545', $timeout);
@@ -92,12 +91,7 @@ class Web3Factory {
                 $lastSyncedBlockId -= 1;
             }
             $fullTranscationData = boolval($cfg['fullTxData'] ?? false);
-            $type                = $cfg['type'] ?? 'node';
-            if ($type == 'proxy') {
-                $web3 = $proxy;
-            } else {
-                $web3 = self::newWeb3($provider);
-            }
+            $web3                = self::newWeb3($provider);
             //最后成功区块
             $successBlockId = 0;
             while ($lastSyncedBlockId < $latestBlockId) { //一直同步到最新区块
